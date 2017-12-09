@@ -6,16 +6,28 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
+import butterknife.BindView
+import butterknife.ButterKnife
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    @BindView(R.id.main_list_view)
+    lateinit var mainList: RecyclerView
+
+    private lateinit var mListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>
+    private lateinit var mListLayoutManager: RecyclerView.LayoutManager
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        ButterKnife.bind(this)
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->
@@ -29,6 +41,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+        mainList.setHasFixedSize(true)
+        mListLayoutManager = LinearLayoutManager(this)
+        mainList.layoutManager = mListLayoutManager
+
+        // https://developer.android.com/training/material/lists-cards.html
     }
 
     override fun onBackPressed() {
