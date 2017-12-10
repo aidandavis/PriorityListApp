@@ -22,8 +22,7 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
 
     fun updateList(newList: List<PrioritisedItem>) {
         itemList.clear()
-         // sort according to priority score
-        itemList.addAll(newList.sortedWith(compareBy(PrioritisedItem::getScore)).reversed())
+        itemList.addAll(newList.sortedWith(compareBy(PrioritisedItem::getScore)).reversed()) // sort according to priority score
         notifyDataSetChanged()
     }
 

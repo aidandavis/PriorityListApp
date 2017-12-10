@@ -5,6 +5,8 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import com.firebase.ui.auth.AuthUI
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -12,10 +14,13 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var mAuth: FirebaseAuth
+
     private lateinit var mPriorityListAdapter: PriorityListItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mAuth = FirebaseAuth.getInstance()
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
@@ -30,6 +35,19 @@ class MainActivity : AppCompatActivity() {
         main_list_view.layoutManager = LinearLayoutManager(this)
         mPriorityListAdapter = PriorityListItemAdapter()
         main_list_view.adapter = mPriorityListAdapter
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (mAuth.currentUser == null) {
+            val providers: List<AuthUI.IdpConfig> = Arrays.asList(
+                    AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
+            )
+            startActivity(AuthUI.getInstance()
+                    .createSignInIntentBuilder()
+                    .setAvailableProviders(providers)
+                    .build())
+        }
     }
 
     override fun onBackPressed() {
