@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @BindView(R.id.main_list_view)
     lateinit var mainList: RecyclerView
 
-    private lateinit var mListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>
+    private lateinit var mListAdapter: PriorityListItemAdapter
     private lateinit var mListLayoutManager: RecyclerView.LayoutManager
 
 
@@ -45,8 +45,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mainList.setHasFixedSize(true)
         mListLayoutManager = LinearLayoutManager(this)
         mainList.layoutManager = mListLayoutManager
+        mListAdapter = PriorityListItemAdapter()
+        mainList.adapter = mListAdapter
+    }
 
-        // https://developer.android.com/training/material/lists-cards.html
+    override fun onResume() {
+        super.onResume()
+
     }
 
     override fun onBackPressed() {
@@ -61,16 +66,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
         return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
-        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
