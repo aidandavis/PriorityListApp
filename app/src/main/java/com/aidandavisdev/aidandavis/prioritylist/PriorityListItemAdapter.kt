@@ -26,12 +26,13 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder? {
-
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.priority_item_card, parent)
+        var view = LayoutInflater.from(parent.context).inflate(R.layout.priority_item_card, parent, false)
+        return ViewHolder(view as CardView)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
+        holder.itemName.text = itemList[position].name
+        holder.itemDescription.text = itemList[position].description
     }
 
     override fun getItemCount(): Int = itemList.size
