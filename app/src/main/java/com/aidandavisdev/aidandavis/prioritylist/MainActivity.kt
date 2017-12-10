@@ -1,49 +1,35 @@
 package com.aidandavisdev.aidandavis.prioritylist
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.view.Menu
-import butterknife.BindView
-import butterknife.ButterKnife
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
-
-    @BindView(R.id.main_list_view) private lateinit var priorityList: RecyclerView
 
     private lateinit var mPriorityListAdapter: PriorityListItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        ButterKnife.bind(this)
+
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+        fab.setOnClickListener { } // launch new activity
 
-        val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        priorityList.setHasFixedSize(true)
-        priorityList.layoutManager = LinearLayoutManager(this)
+        main_list_view.setHasFixedSize(true)
+        main_list_view.layoutManager = LinearLayoutManager(this)
         mPriorityListAdapter = PriorityListItemAdapter()
-        priorityList.adapter = mPriorityListAdapter
-    }
-
-    override fun onResume() {
-        super.onResume()
-        
+        main_list_view.adapter = mPriorityListAdapter
     }
 
     override fun onBackPressed() {
@@ -54,9 +40,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
+    override fun onResume() {
+        super.onResume()
+        mPriorityListAdapter.updateList(mockUpSomeItems())
+    }
+
+    private fun mockUpSomeItems(): List<PrioritisedItem> {
+        val itemList = ArrayList<PrioritisedItem>()
+        itemList.add(PrioritisedItem("", "Walk the dog", "An example item. Importance 4/5, urgency 2/5, effort 4/5", Calendar.getInstance().time, 4, 2, 4))
+        itemList.add(PrioritisedItem("", "Pack for tomorrow", "An example item. Importance 2/5, urgency 3/5, effort 1/5", Calendar.getInstance().time, 2, 3, 1))
+        itemList.add(PrioritisedItem("", "Breathe", "An example item. Importance 5/5, urgency 4/5, effort 1/5", Calendar.getInstance().time, 5, 4, 1))
+        itemList.add(PrioritisedItem("", "Do some gym", "An example item. Importance 5/5, urgency 3/5, effort 5/5", Calendar.getInstance().time, 5, 3, 5))
+        itemList.add(PrioritisedItem("", "Write christmas cards", "An example item. Importance 2/5, urgency 3/5, effort 3/5", Calendar.getInstance().time, 2, 3, 3))
+        itemList.add(PrioritisedItem("", "Gardening", "An example item. Importance 1/5, urgency 1/5, effort 5/5", Calendar.getInstance().time, 1, 1, 5))
+
+        return itemList
     }
 }
