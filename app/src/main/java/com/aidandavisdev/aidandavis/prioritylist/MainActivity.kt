@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { } // launch new activity
+        fab.setOnClickListener { NewItemActivity.open(this) }
 
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mPriorityListAdapter.updateList(mockUpSomeItems())
+        mPriorityListAdapter.updateList(mockUpSomeItems()) // replace with firebase
     }
 
     private fun mockUpSomeItems(): List<PrioritisedItem> {
