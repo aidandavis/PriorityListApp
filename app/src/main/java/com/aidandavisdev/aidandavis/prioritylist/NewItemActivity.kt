@@ -17,7 +17,7 @@ import java.util.*
 
 class NewItemActivity : AppCompatActivity() {
 
-    val TAG = "NewItemActivity"
+    private val TAG = "NewItemActivity"
 
     companion object {
         fun open(context: Context) {
