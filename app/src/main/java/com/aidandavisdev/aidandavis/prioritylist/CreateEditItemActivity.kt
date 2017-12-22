@@ -1,11 +1,13 @@
 package com.aidandavisdev.aidandavis.prioritylist
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import com.aidandavisdev.aidandavis.prioritylist.Constants.Intents.PARAM_ITEM
 import com.google.firebase.auth.FirebaseAuth
@@ -41,7 +43,7 @@ class CreateEditItemActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_edit_item)
         db = FirebaseFirestore.getInstance()
         uId = FirebaseAuth.getInstance().currentUser?.uid!!
-        item = intent.getSerializableExtra(PARAM_ITEM) as PrioritisedItem
+        item = intent.getSerializableExtra(PARAM_ITEM) as PrioritisedIlllllllllllltem
 
         item_delete_button.visibility = View.GONE
         edit_create_progress_bar.visibility = View.GONE
@@ -49,6 +51,21 @@ class CreateEditItemActivity : AppCompatActivity() {
         item_create_button.setOnClickListener({ createOrEditItem() })
 
         // start and end date pickers
+        start_date_button.setOnClickListener { setDate(startDate, start_date_date, start_date_time) }
+        end_date_button.setOnClickListener { setDate(endDate, end_date_date, end_date_time) }
+    }
+
+    private fun setDate(date: Date?, dateText: TextView, timeText: TextView) {
+
+        var calendar = GregorianCalendar()
+
+        val datePicker = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+
+        },
+                Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH))
+                .show()
     }
 
     // populate fields with pre-existing data

@@ -30,7 +30,7 @@ class PrioritisedItem(val id: String,
     }
 
     //returns: 1 =< urgency <= 10
-    fun getUrgency(): Double {
+    private fun getUrgency(): Double {
         if (startDate == null || endDate == null) return 1.0
 
         var urgency = ((startDate!!.time.toDouble())/(endDate!!.time.toDouble())) * 10.0
