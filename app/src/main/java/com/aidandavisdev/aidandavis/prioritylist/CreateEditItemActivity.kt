@@ -33,6 +33,9 @@ class CreateEditItemActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     private lateinit var uId: String
 
+    private var startDate: Date? = null
+    private var endDate: Date? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_edit_item)
@@ -83,16 +86,28 @@ class CreateEditItemActivity : AppCompatActivity() {
             Toast.makeText(this, "Enter an item name", Toast.LENGTH_SHORT).show()
             return
         }
-        if ()
-
         // if end date and no start date, then start date is now
         if (endDate != null && startDate == null) startDate = Calendar.getInstance().time
+        // if start date and no end date, throw exception
+        if (startDate != null && endDate == null) {
+            Toast.makeText(this, "There needs to be a deadline", Toast.LENGTH_SHORT).show()
+            return
+        }
+        // if start date equal to or after end date, throw exception
+        if (startDate != null && endDate != null) {
+            if (startDate!!.time >= endDate!!.time) {
+                Toast.makeText(this, "Start date can't be after deadline", Toast.LENGTH_SHORT).show()
+                return
+            }
+        }
 
         edit_create_progress_bar.visibility = View.VISIBLE
         create_edit_item_button_bar.visibility = View.GONE
-        val newDetails = HashMap<String, Any>()
+        val newDetails = HashMap<String, Any?>()
         newDetails.put("name", item_name.text.toString())
         newDetails.put("description", item_description.text.toString())
+        newDetails.put("startDate", startDate)
+        newDetails.put("endDate", endDate)
         newDetails.put("importance", importance_seekbar.progress + 1)
         newDetails.put("effort", effort_seekbar.progress + 1)
 
