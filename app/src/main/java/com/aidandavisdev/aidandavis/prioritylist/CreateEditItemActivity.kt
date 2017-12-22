@@ -9,7 +9,7 @@ import android.widget.Toast
 import com.aidandavisdev.aidandavis.prioritylist.Constants.Intents.ITEM_UID
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.activity_new_item.*
+import kotlinx.android.synthetic.main.activity_create_edit_item.*
 import java.util.*
 
 /**
@@ -29,33 +29,53 @@ class CreateEditItemActivity : AppCompatActivity() {
     }
 
     private lateinit var itemId: String
+    private lateinit var db: FirebaseFirestore
+    private var uId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_item)
-        val db = FirebaseFirestore.getInstance()
-        val uId = FirebaseAuth.getInstance().currentUser?.uid
+        setContentView(R.layout.activity_create_edit_item)
+        db = FirebaseFirestore.getInstance()
+        uId = FirebaseAuth.getInstance().currentUser?.uid
         itemId = intent.getStringExtra(ITEM_UID)
 
         if (itemId != "") changeToEdit()
 
-        item_create_button.setOnClickListener({ createItem(db, uId) })
+        item_create_button.setOnClickListener({ createOrEditItem() })
     }
 
     // populate fields with pre-existing data
     private fun changeToEdit() {
+        item_create_button.text = "Save"
 
-
+        if (uId != null) {
+            db.collection("users")
+                    .document(uId!!)
+                    .collection("list1")
+                    .document(itemId)
+                    .get()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val doc = task.result
+                            item_name.setText(doc["name"] as String)
+                            item_description.setText(doc["description"] as String)
+                            importance_seekbar.progress = (doc["importance"] as Long).toInt() -1
+                            urgency_seekbar.progress = (doc["urgency"] as Long).toInt() -1
+                            effort_seekbar.progress = (doc["effort"] as Long).toInt() -1
+                        } else {
+                            Log.w(TAG, "Error getting items", task.exception)
+                        }
+                    }
+        }
     }
 
-    private fun createItem(db: FirebaseFirestore, uId: String?) {
+    private fun createOrEditItem() {
         if (item_name.text.isEmpty()) {
             Toast.makeText(this, "Enter an item name", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (uId != null) {
-            item_create_button.isEnabled = false
             val item = HashMap<String, Any>()
             item.put("name", item_name.text.toString())
             item.put("description", item_description.text.toString())
@@ -63,20 +83,34 @@ class CreateEditItemActivity : AppCompatActivity() {
             item.put("urgency", urgency_seekbar.progress + 1)
             item.put("effort", effort_seekbar.progress + 1)
 
-            db.collection("users")
-                    .document(uId)
-                    .collection("list1")
-                    .add(item)
-                    .addOnSuccessListener {
-                        Log.d(TAG, "Item added with ID: ${it.id}")
-                        finish()
-                    }
-                    .addOnFailureListener {
-                        Log.w(TAG, "Error adding item", it)
-                        Toast.makeText(this, "Failure adding item", Toast.LENGTH_SHORT).show()
-                    }
-
-            item_create_button.isEnabled = true
+            if (itemId == "") {
+                db.collection("users")
+                        .document(uId!!)
+                        .collection("list1")
+                        .add(item)
+                        .addOnSuccessListener {
+                            Log.d(TAG, "Item added with ID: ${it.id}")
+                            finish()
+                        }
+                        .addOnFailureListener {
+                            Log.w(TAG, "Error adding item", it)
+                            Toast.makeText(this, "Failure adding item", Toast.LENGTH_SHORT).show()
+                        }
+            } else {
+                db.collection("users")
+                        .document(uId!!)
+                        .collection("list1")
+                        .document(itemId)
+                        .set(item)
+                        .addOnSuccessListener {
+                            Log.d(TAG, "Updated item $itemId")
+                            finish()
+                        }
+                        .addOnFailureListener {
+                            Log.w(TAG, "Error updating item", it)
+                            Toast.makeText(this, "Failure updating item", Toast.LENGTH_SHORT).show()
+                        }
+            }
         }
 
         Log.i(TAG, "Name ${item_name.text}")

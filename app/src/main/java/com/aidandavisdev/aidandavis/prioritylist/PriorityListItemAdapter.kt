@@ -1,5 +1,6 @@
 package com.aidandavisdev.aidandavis.prioritylist
 
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
     }
 
     private var itemList: ArrayList<PrioritisedItem> = ArrayList()
+    private lateinit var context: Context
 
     fun updateList(newList: List<PrioritisedItem>) {
         itemList.clear()
@@ -28,6 +30,7 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder? {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.priority_item_card, parent, false)
+        context = parent.context
         return ViewHolder(view)
     }
 
@@ -35,9 +38,12 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
         holder.itemName.text = itemList[position].name
         holder.itemDescription.text = itemList[position].description
         holder.itemScore.text = "%.2f".format(itemList[position].getScore())
+
+        holder.itemView.setOnLongClickListener {
+            CreateEditItemActivity.open(context, itemList[position].id)
+            true
+        }
     }
 
     override fun getItemCount(): Int = itemList.size
-
-
 }
