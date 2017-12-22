@@ -1,7 +1,5 @@
 package com.aidandavisdev.aidandavis.prioritylist
 
-import java.util.*
-
 /**
  * Created by Aidan Davis on 9/12/2017.
  */

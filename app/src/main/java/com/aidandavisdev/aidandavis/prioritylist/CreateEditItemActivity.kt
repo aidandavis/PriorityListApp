@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
+import com.aidandavisdev.aidandavis.prioritylist.Constants.Intents.ITEM_UID
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_new_item.*
@@ -15,24 +16,36 @@ import java.util.*
  * Created by Aidan Davis on 16/12/2017.
  */
 
-class NewItemActivity : AppCompatActivity() {
+class CreateEditItemActivity : AppCompatActivity() {
 
-    private val TAG = "NewItemActivity"
+    private val TAG = "CreateEditItemActivity"
 
     companion object {
-        fun open(context: Context) {
-            val openIntent = Intent(context, NewItemActivity::class.java)
+        fun open(context: Context, itemId: String) {
+            val openIntent = Intent(context, CreateEditItemActivity::class.java)
+            openIntent.putExtra(ITEM_UID, itemId)
             context.startActivity(openIntent)
         }
     }
+
+    private lateinit var itemId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_item)
         val db = FirebaseFirestore.getInstance()
         val uId = FirebaseAuth.getInstance().currentUser?.uid
+        itemId = intent.getStringExtra(ITEM_UID)
+
+        if (itemId != "") changeToEdit()
 
         item_create_button.setOnClickListener({ createItem(db, uId) })
+    }
+
+    // populate fields with pre-existing data
+    private fun changeToEdit() {
+
+
     }
 
     private fun createItem(db: FirebaseFirestore, uId: String?) {
@@ -72,5 +85,4 @@ class NewItemActivity : AppCompatActivity() {
         Log.i(TAG, "Urgency ${urgency_seekbar.progress}")
         Log.i(TAG, "Effort ${effort_seekbar.progress}")
     }
-
 }

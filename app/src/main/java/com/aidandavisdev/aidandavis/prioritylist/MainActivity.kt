@@ -1,10 +1,8 @@
 package com.aidandavisdev.aidandavis.prioritylist
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
@@ -33,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { NewItemActivity.open(this) }
+        fab.setOnClickListener { CreateEditItemActivity.open(this, "") }
 
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
@@ -93,12 +91,12 @@ class MainActivity : AppCompatActivity() {
                             Log.w(TAG, "Error getting items", task.exception)
                         }
                     }
-        } else {
-            mPriorityListAdapter.updateList(mockUpSomeItems())
-
+        }
+//        else {
+//            mPriorityListAdapter.updateList(mockUpSomeItems())
             // until I work out how to do it in kotlin properly
 //            showNoItemsDialog()
-        }
+//        }
     }
 
 //    private fun showNoItemsDialog() {
