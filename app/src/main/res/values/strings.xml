@@ -12,6 +12,9 @@
     <string name="create_save_button_save">Save</string>
     <string name="create_save_button_create">Create</string>
     <string name="delete_button">Delete</string>
-    <string name="start_date_text">When does it start?</string>
-    <string name="end_date_text">When is the deadline?</string>
+    <string name="start_date_text">When does it start? (Optional)</string>
+    <string name="end_date_text">When is the deadline? (Req. if Start Date chosen)</string>
+    <string name="hint_time">Time</string>
+    <string name="hint_date">Date</string>
+    <string name="button_set_date">Set Date</string>
 </resources>
