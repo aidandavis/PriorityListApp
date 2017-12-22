@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,7 +46,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (mAuth.currentUser == null) {
+        val currentUser = mAuth.currentUser
+        if (currentUser == null) {
             val providers: List<AuthUI.IdpConfig> = Arrays.asList(
                     AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
             )
@@ -53,6 +55,15 @@ class MainActivity : AppCompatActivity() {
                     .createSignInIntentBuilder()
                     .setAvailableProviders(providers)
                     .build())
+        } else {
+            val userInfo = HashMap<String, Any>()
+            if (currentUser.displayName != null) userInfo.put("display_name", currentUser.displayName!!)
+            if (currentUser.email != null) userInfo.put("display_name", currentUser.email!!)
+            if (currentUser.phoneNumber != null) userInfo.put("display_name", currentUser.phoneNumber!!)
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(currentUser.uid)
+                    .update(userInfo)
         }
     }
 
