@@ -1,6 +1,7 @@
 package com.aidandavisdev.aidandavis.prioritylist
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -43,7 +44,7 @@ class CreateEditItemActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_edit_item)
         db = FirebaseFirestore.getInstance()
         uId = FirebaseAuth.getInstance().currentUser?.uid!!
-        item = intent.getSerializableExtra(PARAM_ITEM) as PrioritisedIlllllllllllltem
+        item = intent.getSerializableExtra(PARAM_ITEM) as PrioritisedItem?
 
         item_delete_button.visibility = View.GONE
         edit_create_progress_bar.visibility = View.GONE
@@ -56,15 +57,35 @@ class CreateEditItemActivity : AppCompatActivity() {
     }
 
     private fun setDate(date: Date?, dateText: TextView, timeText: TextView) {
+        val newDate = GregorianCalendar()
+        val currentDate = GregorianCalendar()
+        if (date != null) {
+            currentDate.time = date
+        } else {
+            currentDate.time = Calendar.getInstance().time
+        }
 
-        var calendar = GregorianCalendar()
+        DatePickerDialog(this,
+                DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                    newDate.set(Calendar.YEAR, year)
+                    newDate.set(Calendar.MONTH, month)
+                    newDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                    dateText.text = "$dayOfMonth / $month / $year"
 
-        val datePicker = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-
-        },
-                Calendar.getInstance().get(Calendar.YEAR),
-                Calendar.getInstance().get(Calendar.MONTH),
-                Calendar.getInstance().get(Calendar.DAY_OF_MONTH))
+                    TimePickerDialog(this,
+                            TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                                newDate.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                                newDate.set(Calendar.MINUTE, minute)
+                                timeText.text = "$hourOfDay:$minute"
+                            },
+                            currentDate.get(Calendar.HOUR_OF_DAY),
+                            currentDate.get(Calendar.MINUTE),
+                            true)
+                            .show()
+                },
+                currentDate.get(Calendar.YEAR),
+                currentDate.get(Calendar.MONTH),
+                currentDate.get(Calendar.DAY_OF_MONTH))
                 .show()
     }
 
@@ -160,7 +181,6 @@ class CreateEditItemActivity : AppCompatActivity() {
                         create_edit_item_button_bar.visibility = View.VISIBLE
                     }
         }
-
         Log.i(TAG, "Name ${item_name.text}")
         Log.i(TAG, "Description ${item_description.text}")
         Log.i(TAG, "Importance ${importance_seekbar.progress}")
