@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.aidandavisdev.aidandavis.prioritylist.Constants.Intents.ITEM_UID
 import com.google.firebase.auth.FirebaseAuth
@@ -39,6 +40,8 @@ class CreateEditItemActivity : AppCompatActivity() {
         uId = FirebaseAuth.getInstance().currentUser?.uid
         itemId = intent.getStringExtra(ITEM_UID)
 
+        item_delete_button.visibility = View.GONE
+
         if (itemId != "") changeToEdit()
 
         item_create_button.setOnClickListener({ createOrEditItem() })
@@ -47,26 +50,40 @@ class CreateEditItemActivity : AppCompatActivity() {
     // populate fields with pre-existing data
     private fun changeToEdit() {
         item_create_button.text = "Save"
-
-        if (uId != null) {
+        item_delete_button.visibility = View.VISIBLE
+        item_delete_button.setOnClickListener {
             db.collection("users")
                     .document(uId!!)
                     .collection("list1")
                     .document(itemId)
-                    .get()
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val doc = task.result
-                            item_name.setText(doc["name"] as String)
-                            item_description.setText(doc["description"] as String)
-                            importance_seekbar.progress = (doc["importance"] as Long).toInt() -1
-                            urgency_seekbar.progress = (doc["urgency"] as Long).toInt() -1
-                            effort_seekbar.progress = (doc["effort"] as Long).toInt() -1
-                        } else {
-                            Log.w(TAG, "Error getting items", task.exception)
-                        }
+                    .delete()
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Deleted item $itemId")
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        Log.w(TAG, "Error deleting item", it)
+                        Toast.makeText(this, "Failure deleting item", Toast.LENGTH_SHORT).show()
                     }
         }
+
+        db.collection("users")
+                .document(uId!!)
+                .collection("list1")
+                .document(itemId)
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val doc = task.result
+                        item_name.setText(doc["name"] as String)
+                        item_description.setText(doc["description"] as String)
+                        importance_seekbar.progress = (doc["importance"] as Long).toInt() - 1
+                        urgency_seekbar.progress = (doc["urgency"] as Long).toInt() - 1
+                        effort_seekbar.progress = (doc["effort"] as Long).toInt() - 1
+                    } else {
+                        Log.w(TAG, "Error getting items", task.exception)
+                    }
+                }
     }
 
     private fun createOrEditItem() {

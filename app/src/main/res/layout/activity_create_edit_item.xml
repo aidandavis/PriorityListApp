@@ -1,106 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp">
 
-    <EditText
-        android:id="@+id/item_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/item_description"
-        android:hint="@string/item_name_hint"
-        android:textSize="32sp" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/item_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/item_name"
-        android:layout_above="@id/importance_seekbar_layout"
-        android:layout_margin="8dp"
-        android:hint="@string/item_description_hint" />
-
-    <LinearLayout
-        android:id="@+id/importance_seekbar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="8dp"
-        android:layout_above="@id/urgency_seekbar_layout">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Importance"/>
-
-        <android.support.v7.widget.AppCompatSeekBar
-            android:id="@+id/importance_seekbar"
+        <EditText
+            android:id="@+id/item_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="4"/>
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/item_description"
+            android:hint="@string/item_name_hint"
+            android:textSize="32sp" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/urgency_seekbar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="8dp"
-        android:layout_above="@+id/effort_seekbar_layout">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Urgency"/>
-
-        <android.support.v7.widget.AppCompatSeekBar
-            android:id="@+id/urgency_seekbar"
+        <EditText
+            android:id="@+id/item_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="4"/>
+            android:layout_below="@id/item_name"
+            android:layout_margin="8dp"
+            android:hint="@string/item_description_hint" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/effort_seekbar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="8dp"
-        android:layout_above="@id/new_item_button_bar">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Effort"/>
-
-        <android.support.v7.widget.AppCompatSeekBar
-            android:id="@+id/effort_seekbar"
+        <LinearLayout
+            android:id="@+id/importance_seekbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="4"/>
+            android:layout_below="@id/item_description"
+            android:layout_margin="8dp"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Importance" />
 
-    <LinearLayout
-        android:id="@+id/new_item_button_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="8dp"
-        android:layout_alignParentBottom="true"
-        android:gravity="right">
+            <android.support.v7.widget.AppCompatSeekBar
+                android:id="@+id/importance_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="4" />
 
-        <Button
-            android:id="@+id/item_create_button"
-            android:layout_width="wrap_content"
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/urgency_seekbar_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create"/>
+            android:layout_below="@id/importance_seekbar_layout"
+            android:layout_margin="8dp"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Urgency" />
 
+            <android.support.v7.widget.AppCompatSeekBar
+                android:id="@+id/urgency_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="4" />
 
-</RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/effort_seekbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/urgency_seekbar_layout"
+            android:layout_margin="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Effort" />
+
+            <android.support.v7.widget.AppCompatSeekBar
+                android:id="@+id/effort_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="4" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/new_item_button_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/effort_seekbar_layout"
+            android:layout_margin="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/item_delete_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/item_create_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>
