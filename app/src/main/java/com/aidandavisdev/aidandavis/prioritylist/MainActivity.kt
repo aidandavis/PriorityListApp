@@ -82,6 +82,8 @@ class MainActivity : AppCompatActivity() {
                                         it.id,
                                         it.data["name"] as String,
                                         it.data["description"] as String,
+                                        it.data["startDate"] as Date,
+                                        it.data["endDate"] as Date,
                                         (it.data["importance"] as Long).toInt(),
                                         (it.data["effort"] as Long).toInt(),
                                         if (it.data["ticked"] != null) {

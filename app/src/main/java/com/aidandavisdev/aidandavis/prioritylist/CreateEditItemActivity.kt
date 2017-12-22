@@ -42,10 +42,10 @@ class CreateEditItemActivity : AppCompatActivity() {
 
         item_delete_button.visibility = View.GONE
         edit_create_progress_bar.visibility = View.GONE
-
         if (item != null) changeToEdit()
-
         item_create_button.setOnClickListener({ createOrEditItem() })
+
+        // start and end date pickers
     }
 
     // populate fields with pre-existing data
@@ -83,6 +83,10 @@ class CreateEditItemActivity : AppCompatActivity() {
             Toast.makeText(this, "Enter an item name", Toast.LENGTH_SHORT).show()
             return
         }
+        if ()
+
+        // if end date and no start date, then start date is now
+        if (endDate != null && startDate == null) startDate = Calendar.getInstance().time
 
         edit_create_progress_bar.visibility = View.VISIBLE
         create_edit_item_button_bar.visibility = View.GONE

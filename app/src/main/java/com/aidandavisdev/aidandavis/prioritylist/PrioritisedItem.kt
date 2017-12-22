@@ -1,6 +1,7 @@
 package com.aidandavisdev.aidandavis.prioritylist
 
 import java.io.Serializable
+import java.util.*
 
 /**
  * Created by Aidan Davis on 9/12/2017.
@@ -9,18 +10,32 @@ import java.io.Serializable
 class PrioritisedItem(val id: String,
                       var name: String,
                       var description: String,
+                      private var startDate: Date?,
+                      private var endDate: Date?,
                       var importance: Int,
                       var effort: Int,
                       var ticked: Boolean) : Serializable {
 
-    // would be interesting to have these limits as a remoteconfig
     init {
-        if (importance > 10 || importance < 1) {
-            throw Exception()
+        // check that effort and importance are within expected range
+        // would be interesting to have these limits as a remote config
+        if (importance > 10 || importance < 1) throw Exception()
+        if (effort > 10 || effort < 1) throw Exception()
+        // if start date and no end date, throw exception
+        if (startDate != null && endDate == null) throw Exception()
+        // if start date equal to or after end date, throw exception
+        if (startDate != null && endDate != null) {
+            if (startDate!!.time >= endDate!!.time) throw Exception()
         }
-        if (effort > 10 || effort < 1) {
-            throw Exception()
-        }
+    }
+
+    //returns: 1 =< urgency <= 10
+    fun getUrgency(): Double {
+        if (startDate == null || endDate == null) return 1.0
+
+        var urgency = ((startDate!!.time.toDouble())/(endDate!!.time.toDouble())) * 10.0
+        if (urgency < 1.0) urgency = 1.0
+        return urgency
     }
 
     // returns the priority score of this object
@@ -29,7 +44,7 @@ class PrioritisedItem(val id: String,
     fun getScore(): Double {
         val revEffort = 11 - effort
         return Math.sqrt(Math.pow(importance.toDouble(), 2.0) +
-//                Math.pow(urgency.toDouble(), 2.0) +
+                Math.pow(getUrgency(), 2.0) +
                 Math.pow(revEffort.toDouble(), 2.0))
     }
 }
