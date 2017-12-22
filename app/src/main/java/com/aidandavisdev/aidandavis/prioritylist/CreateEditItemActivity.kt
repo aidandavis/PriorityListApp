@@ -41,6 +41,7 @@ class CreateEditItemActivity : AppCompatActivity() {
         itemId = intent.getStringExtra(ITEM_UID)
 
         item_delete_button.visibility = View.GONE
+        edit_create_progress_bar.visibility = View.GONE
 
         if (itemId != "") changeToEdit()
 
@@ -52,6 +53,8 @@ class CreateEditItemActivity : AppCompatActivity() {
         item_create_button.text = "Save"
         item_delete_button.visibility = View.VISIBLE
         item_delete_button.setOnClickListener {
+            edit_create_progress_bar.visibility = View.VISIBLE
+            create_edit_item_button_bar.visibility = View.GONE
             db.collection("users")
                     .document(uId!!)
                     .collection("list1")
@@ -64,15 +67,19 @@ class CreateEditItemActivity : AppCompatActivity() {
                     .addOnFailureListener {
                         Log.w(TAG, "Error deleting item", it)
                         Toast.makeText(this, "Failure deleting item", Toast.LENGTH_SHORT).show()
+                        edit_create_progress_bar.visibility = View.GONE
+                        create_edit_item_button_bar.visibility = View.VISIBLE
                     }
         }
 
+        edit_create_progress_bar.visibility = View.VISIBLE
         db.collection("users")
                 .document(uId!!)
                 .collection("list1")
                 .document(itemId)
                 .get()
                 .addOnCompleteListener { task ->
+                    edit_create_progress_bar.visibility = View.GONE
                     if (task.isSuccessful) {
                         val doc = task.result
                         item_name.setText(doc["name"] as String)
@@ -93,6 +100,8 @@ class CreateEditItemActivity : AppCompatActivity() {
         }
 
         if (uId != null) {
+            edit_create_progress_bar.visibility = View.VISIBLE
+            create_edit_item_button_bar.visibility = View.GONE
             val item = HashMap<String, Any>()
             item.put("name", item_name.text.toString())
             item.put("description", item_description.text.toString())
@@ -112,6 +121,8 @@ class CreateEditItemActivity : AppCompatActivity() {
                         .addOnFailureListener {
                             Log.w(TAG, "Error adding item", it)
                             Toast.makeText(this, "Failure adding item", Toast.LENGTH_SHORT).show()
+                            edit_create_progress_bar.visibility = View.GONE
+                            create_edit_item_button_bar.visibility = View.VISIBLE
                         }
             } else {
                 db.collection("users")
@@ -126,6 +137,8 @@ class CreateEditItemActivity : AppCompatActivity() {
                         .addOnFailureListener {
                             Log.w(TAG, "Error updating item", it)
                             Toast.makeText(this, "Failure updating item", Toast.LENGTH_SHORT).show()
+                            edit_create_progress_bar.visibility = View.GONE
+                            create_edit_item_button_bar.visibility = View.VISIBLE
                         }
             }
         }

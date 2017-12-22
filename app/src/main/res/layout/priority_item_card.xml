@@ -26,14 +26,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/item_name"
+            android:layout_marginLeft="4dp"
             android:text="The description of this item"/>
+
+        <CheckBox
+            android:id="@+id/ticked_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/item_description"/>
         
         <TextView
             android:id="@+id/item_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@id/ticked_checkbox"
+            android:layout_alignBaseline="@id/ticked_checkbox"
             android:text="score"/>
 
     </RelativeLayout>

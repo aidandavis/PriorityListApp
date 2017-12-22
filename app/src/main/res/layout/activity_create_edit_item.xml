@@ -8,11 +8,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
+        <ProgressBar
+            android:id="@+id/edit_create_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:indeterminate="true"/>
+
         <EditText
             android:id="@+id/item_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_below="@id/edit_create_progress_bar"
             android:layout_alignStart="@+id/item_description"
             android:hint="@string/item_name_hint"
             android:textSize="32sp" />
@@ -89,7 +97,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/new_item_button_bar"
+            android:id="@+id/create_edit_item_button_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/effort_seekbar_layout"

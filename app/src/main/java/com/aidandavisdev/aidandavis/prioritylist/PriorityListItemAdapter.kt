@@ -5,7 +5,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.TextView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 /**
  * Created by Aidan Davis on 10/12/2017.
@@ -17,6 +20,7 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
         internal var itemName: TextView = view.findViewById(R.id.item_name)
         internal var itemDescription: TextView = view.findViewById(R.id.item_description)
         internal var itemScore: TextView = view.findViewById(R.id.item_score)
+        internal var tickedCheckbox: CheckBox = view.findViewById(R.id.ticked_checkbox)
     }
 
     private var itemList: ArrayList<PrioritisedItem> = ArrayList()
@@ -38,10 +42,23 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
         holder.itemName.text = itemList[position].name
         holder.itemDescription.text = itemList[position].description
         holder.itemScore.text = "%.2f".format(itemList[position].getScore())
+        holder.tickedCheckbox.isChecked = itemList[position].ticked
 
         holder.itemView.setOnLongClickListener {
             CreateEditItemActivity.open(context, itemList[position].id)
             true
+        }
+
+        val uId = FirebaseAuth.getInstance().currentUser?.uid
+        if (uId != null) {
+            holder.tickedCheckbox.setOnClickListener {
+                FirebaseFirestore.getInstance()
+                        .collection("users")
+                        .document(uId)
+                        .collection("list1")
+                        .document(itemList[position].id)
+                        .update("ticked", holder.tickedCheckbox.isChecked)
+            }
         }
     }
 

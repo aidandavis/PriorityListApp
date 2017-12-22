@@ -83,7 +83,12 @@ class MainActivity : AppCompatActivity() {
                                         it.data["description"] as String,
                                         (it.data["importance"] as Long).toInt(),
                                         (it.data["urgency"] as Long).toInt(),
-                                        (it.data["effort"] as Long).toInt()
+                                        (it.data["effort"] as Long).toInt(),
+                                        if (it.data["ticked"] != null) {
+                                            it.data["ticked"] as Boolean
+                                        } else {
+                                            false
+                                        }
                                 )
                             }
                             mPriorityListAdapter.updateList(itemList)
@@ -110,12 +115,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun mockUpSomeItems(): List<PrioritisedItem> {
         val itemList = ArrayList<PrioritisedItem>()
-        itemList.add(PrioritisedItem("", "Walk the dog", "An example item. Importance 4/5, urgency 2/5, effort 4/5", 4, 2, 4))
-        itemList.add(PrioritisedItem("", "Pack for tomorrow", "An example item. Importance 2/5, urgency 3/5, effort 1/5", 2, 3, 1))
-        itemList.add(PrioritisedItem("", "Breathe", "An example item. Importance 5/5, urgency 4/5, effort 1/5", 5, 4, 1))
-        itemList.add(PrioritisedItem("", "Do some gym", "An example item. Importance 5/5, urgency 3/5, effort 5/5", 5, 3, 5))
-        itemList.add(PrioritisedItem("", "Write christmas cards", "An example item. Importance 2/5, urgency 3/5, effort 3/5", 2, 3, 3))
-        itemList.add(PrioritisedItem("", "Gardening", "An example item. Importance 1/5, urgency 1/5, effort 5/5", 1, 1, 5))
+        itemList.add(PrioritisedItem("", "Walk the dog", "An example item. Importance 4/5, urgency 2/5, effort 4/5", 4, 2, 4, true))
+        itemList.add(PrioritisedItem("", "Pack for tomorrow", "An example item. Importance 2/5, urgency 3/5, effort 1/5", 2, 3, 1, false))
+        itemList.add(PrioritisedItem("", "Breathe", "An example item. Importance 5/5, urgency 4/5, effort 1/5", 5, 4, 1, true))
+        itemList.add(PrioritisedItem("", "Do some gym", "An example item. Importance 5/5, urgency 3/5, effort 5/5", 5, 3, 5, false))
+        itemList.add(PrioritisedItem("", "Write christmas cards", "An example item. Importance 2/5, urgency 3/5, effort 3/5", 2, 3, 3, false))
+        itemList.add(PrioritisedItem("", "Gardening", "An example item. Importance 1/5, urgency 1/5, effort 5/5", 1, 1, 5, true))
 
         return itemList
     }

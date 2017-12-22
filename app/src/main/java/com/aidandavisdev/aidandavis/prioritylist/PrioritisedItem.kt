@@ -4,7 +4,7 @@ package com.aidandavisdev.aidandavis.prioritylist
  * Created by Aidan Davis on 9/12/2017.
  */
 
-class PrioritisedItem(val id: String, var name: String, var description: String, var importance: Int, var urgency: Int, var effort: Int) {
+class PrioritisedItem(val id: String, var name: String, var description: String, var importance: Int, var urgency: Int, var effort: Int, var ticked: Boolean) {
 
     // would be interesting to have these limits as a remoteconfig
     init {
