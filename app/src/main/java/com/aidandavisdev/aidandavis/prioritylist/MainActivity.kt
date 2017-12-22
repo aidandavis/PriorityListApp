@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { CreateEditItemActivity.open(this, "") }
+        fab.setOnClickListener { CreateEditItemActivity.open(this, null) }
 
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
@@ -55,15 +54,6 @@ class MainActivity : AppCompatActivity() {
                     .createSignInIntentBuilder()
                     .setAvailableProviders(providers)
                     .build())
-        } else {
-            val userInfo = HashMap<String, Any>()
-            if (currentUser.displayName != null) userInfo.put("display_name", currentUser.displayName!!)
-            if (currentUser.email != null) userInfo.put("display_name", currentUser.email!!)
-            if (currentUser.phoneNumber != null) userInfo.put("display_name", currentUser.phoneNumber!!)
-            FirebaseFirestore.getInstance()
-                    .collection("users")
-                    .document(currentUser.uid)
-                    .update(userInfo)
         }
     }
 
@@ -93,7 +83,6 @@ class MainActivity : AppCompatActivity() {
                                         it.data["name"] as String,
                                         it.data["description"] as String,
                                         (it.data["importance"] as Long).toInt(),
-                                        (it.data["urgency"] as Long).toInt(),
                                         (it.data["effort"] as Long).toInt(),
                                         if (it.data["ticked"] != null) {
                                             it.data["ticked"] as Boolean
@@ -108,31 +97,5 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
         }
-//        else {
-//            mPriorityListAdapter.updateList(mockUpSomeItems())
-            // until I work out how to do it in kotlin properly
-//            showNoItemsDialog()
-//        }
-    }
-
-//    private fun showNoItemsDialog() {
-//        val builder = AlertDialog.Builder(this)
-//        builder.setTitle(getString(R.string.no_items_dialog_title))
-//                .setMessage(getString(R.string.no_items_dialog_message))
-//                .setPositiveButton("Create Now!", DialogInterface.OnClickListener(() -> ))
-//                .setNegativeButton("Ok", )
-//        builder.create().show()
-//    }
-
-    private fun mockUpSomeItems(): List<PrioritisedItem> {
-        val itemList = ArrayList<PrioritisedItem>()
-        itemList.add(PrioritisedItem("", "Walk the dog", "An example item. Importance 4/5, urgency 2/5, effort 4/5", 4, 2, 4, true))
-        itemList.add(PrioritisedItem("", "Pack for tomorrow", "An example item. Importance 2/5, urgency 3/5, effort 1/5", 2, 3, 1, false))
-        itemList.add(PrioritisedItem("", "Breathe", "An example item. Importance 5/5, urgency 4/5, effort 1/5", 5, 4, 1, true))
-        itemList.add(PrioritisedItem("", "Do some gym", "An example item. Importance 5/5, urgency 3/5, effort 5/5", 5, 3, 5, false))
-        itemList.add(PrioritisedItem("", "Write christmas cards", "An example item. Importance 2/5, urgency 3/5, effort 3/5", 2, 3, 3, false))
-        itemList.add(PrioritisedItem("", "Gardening", "An example item. Importance 1/5, urgency 1/5, effort 5/5", 1, 1, 5, true))
-
-        return itemList
     }
 }

@@ -45,7 +45,7 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
         holder.tickedCheckbox.isChecked = itemList[position].ticked
 
         holder.itemView.setOnLongClickListener {
-            CreateEditItemActivity.open(context, itemList[position].id)
+            CreateEditItemActivity.open(context, itemList[position])
             true
         }
 

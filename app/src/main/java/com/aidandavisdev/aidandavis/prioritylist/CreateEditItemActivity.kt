@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.aidandavisdev.aidandavis.prioritylist.Constants.Intents.ITEM_UID
+import com.aidandavisdev.aidandavis.prioritylist.Constants.Intents.PARAM_ITEM
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_create_edit_item.*
@@ -22,46 +22,51 @@ class CreateEditItemActivity : AppCompatActivity() {
     private val TAG = "CreateEditItemActivity"
 
     companion object {
-        fun open(context: Context, itemId: String) {
+        fun open(context: Context, item: PrioritisedItem?) {
             val openIntent = Intent(context, CreateEditItemActivity::class.java)
-            openIntent.putExtra(ITEM_UID, itemId)
+            openIntent.putExtra(PARAM_ITEM, item)
             context.startActivity(openIntent)
         }
     }
 
-    private lateinit var itemId: String
+    private var item: PrioritisedItem? = null
     private lateinit var db: FirebaseFirestore
-    private var uId: String? = null
+    private lateinit var uId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_edit_item)
         db = FirebaseFirestore.getInstance()
-        uId = FirebaseAuth.getInstance().currentUser?.uid
-        itemId = intent.getStringExtra(ITEM_UID)
+        uId = FirebaseAuth.getInstance().currentUser?.uid!!
+        item = intent.getSerializableExtra(PARAM_ITEM) as PrioritisedItem
 
         item_delete_button.visibility = View.GONE
         edit_create_progress_bar.visibility = View.GONE
 
-        if (itemId != "") changeToEdit()
+        if (item != null) changeToEdit()
 
         item_create_button.setOnClickListener({ createOrEditItem() })
     }
 
     // populate fields with pre-existing data
     private fun changeToEdit() {
-        item_create_button.text = "Save"
+        item_name.setText(item!!.name)
+        item_description.setText(item!!.description)
+        importance_seekbar.progress = item!!.importance
+        effort_seekbar.progress = item!!.effort
+
+        item_create_button.text = getString(R.string.create_save_button_save)
         item_delete_button.visibility = View.VISIBLE
         item_delete_button.setOnClickListener {
             edit_create_progress_bar.visibility = View.VISIBLE
             create_edit_item_button_bar.visibility = View.GONE
             db.collection("users")
-                    .document(uId!!)
+                    .document(uId)
                     .collection("list1")
-                    .document(itemId)
+                    .document(item!!.id)
                     .delete()
                     .addOnSuccessListener {
-                        Log.d(TAG, "Deleted item $itemId")
+                        Log.d(TAG, "Deleted item $item")
                         finish()
                     }
                     .addOnFailureListener {
@@ -71,26 +76,6 @@ class CreateEditItemActivity : AppCompatActivity() {
                         create_edit_item_button_bar.visibility = View.VISIBLE
                     }
         }
-
-        edit_create_progress_bar.visibility = View.VISIBLE
-        db.collection("users")
-                .document(uId!!)
-                .collection("list1")
-                .document(itemId)
-                .get()
-                .addOnCompleteListener { task ->
-                    edit_create_progress_bar.visibility = View.GONE
-                    if (task.isSuccessful) {
-                        val doc = task.result
-                        item_name.setText(doc["name"] as String)
-                        item_description.setText(doc["description"] as String)
-                        importance_seekbar.progress = (doc["importance"] as Long).toInt() - 1
-                        urgency_seekbar.progress = (doc["urgency"] as Long).toInt() - 1
-                        effort_seekbar.progress = (doc["effort"] as Long).toInt() - 1
-                    } else {
-                        Log.w(TAG, "Error getting items", task.exception)
-                    }
-                }
     }
 
     private fun createOrEditItem() {
@@ -99,54 +84,50 @@ class CreateEditItemActivity : AppCompatActivity() {
             return
         }
 
-        if (uId != null) {
-            edit_create_progress_bar.visibility = View.VISIBLE
-            create_edit_item_button_bar.visibility = View.GONE
-            val item = HashMap<String, Any>()
-            item.put("name", item_name.text.toString())
-            item.put("description", item_description.text.toString())
-            item.put("importance", importance_seekbar.progress + 1)
-            item.put("urgency", urgency_seekbar.progress + 1)
-            item.put("effort", effort_seekbar.progress + 1)
+        edit_create_progress_bar.visibility = View.VISIBLE
+        create_edit_item_button_bar.visibility = View.GONE
+        val newDetails = HashMap<String, Any>()
+        newDetails.put("name", item_name.text.toString())
+        newDetails.put("description", item_description.text.toString())
+        newDetails.put("importance", importance_seekbar.progress + 1)
+        newDetails.put("effort", effort_seekbar.progress + 1)
 
-            if (itemId == "") {
-                db.collection("users")
-                        .document(uId!!)
-                        .collection("list1")
-                        .add(item)
-                        .addOnSuccessListener {
-                            Log.d(TAG, "Item added with ID: ${it.id}")
-                            finish()
-                        }
-                        .addOnFailureListener {
-                            Log.w(TAG, "Error adding item", it)
-                            Toast.makeText(this, "Failure adding item", Toast.LENGTH_SHORT).show()
-                            edit_create_progress_bar.visibility = View.GONE
-                            create_edit_item_button_bar.visibility = View.VISIBLE
-                        }
-            } else {
-                db.collection("users")
-                        .document(uId!!)
-                        .collection("list1")
-                        .document(itemId)
-                        .set(item)
-                        .addOnSuccessListener {
-                            Log.d(TAG, "Updated item $itemId")
-                            finish()
-                        }
-                        .addOnFailureListener {
-                            Log.w(TAG, "Error updating item", it)
-                            Toast.makeText(this, "Failure updating item", Toast.LENGTH_SHORT).show()
-                            edit_create_progress_bar.visibility = View.GONE
-                            create_edit_item_button_bar.visibility = View.VISIBLE
-                        }
-            }
+        if (item == null) {
+            db.collection("users")
+                    .document(uId)
+                    .collection("list1")
+                    .add(newDetails)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Item added with ID: ${it.id}")
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        Log.w(TAG, "Error adding item", it)
+                        Toast.makeText(this, "Failure adding item", Toast.LENGTH_SHORT).show()
+                        edit_create_progress_bar.visibility = View.GONE
+                        create_edit_item_button_bar.visibility = View.VISIBLE
+                    }
+        } else {
+            db.collection("users")
+                    .document(uId)
+                    .collection("list1")
+                    .document(item!!.id)
+                    .set(newDetails)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Updated item ${this.item}")
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        Log.w(TAG, "Error updating item", it)
+                        Toast.makeText(this, "Failure updating item", Toast.LENGTH_SHORT).show()
+                        edit_create_progress_bar.visibility = View.GONE
+                        create_edit_item_button_bar.visibility = View.VISIBLE
+                    }
         }
 
         Log.i(TAG, "Name ${item_name.text}")
         Log.i(TAG, "Description ${item_description.text}")
         Log.i(TAG, "Importance ${importance_seekbar.progress}")
-        Log.i(TAG, "Urgency ${urgency_seekbar.progress}")
         Log.i(TAG, "Effort ${effort_seekbar.progress}")
     }
 }

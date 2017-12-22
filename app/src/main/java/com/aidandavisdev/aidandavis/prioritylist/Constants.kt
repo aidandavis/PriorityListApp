@@ -7,6 +7,6 @@ package com.aidandavisdev.aidandavis.prioritylist
 class Constants {
 
     object Intents {
-        val ITEM_UID = "ITEM_UID"
+        val PARAM_ITEM = "PARAM_ITEM"
     }
 }

@@ -44,18 +44,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Importance" />
+                android:text="@string/importance_seekbar_text" />
 
             <android.support.v7.widget.AppCompatSeekBar
                 android:id="@+id/importance_seekbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="4" />
+                android:max="9" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/urgency_seekbar_layout"
+            android:id="@+id/effort_seekbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/importance_seekbar_layout"
@@ -65,34 +65,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Urgency" />
-
-            <android.support.v7.widget.AppCompatSeekBar
-                android:id="@+id/urgency_seekbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="4" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/effort_seekbar_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/urgency_seekbar_layout"
-            android:layout_margin="8dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Effort" />
+                android:text="@string/effort_seekbar_text" />
 
             <android.support.v7.widget.AppCompatSeekBar
                 android:id="@+id/effort_seekbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="4" />
+                android:max="9" />
 
         </LinearLayout>
 
@@ -108,7 +87,7 @@
                 android:id="@+id/item_delete_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delete"/>
+                android:text="@string/delete_button"/>
 
             <Space
                 android:layout_width="0dp"
@@ -119,7 +98,7 @@
                 android:id="@+id/item_create_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Create" />
+                android:text="@string/create_save_button_create" />
 
         </LinearLayout>
 
