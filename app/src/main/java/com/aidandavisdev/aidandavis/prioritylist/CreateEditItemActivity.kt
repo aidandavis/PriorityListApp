@@ -54,22 +54,31 @@ class CreateEditItemActivity : AppCompatActivity() {
         if (item != null) changeToEdit()
         item_create_button.setOnClickListener({ createOrEditItem() })
 
-        // start and end date pickers
+        start_date_clear_button.visibility = View.GONE
         start_date_button.setOnClickListener {
             if (startDate == null) startDate = Calendar.getInstance().time
             setDate(startDate!!, start_date_date)
+            start_date_clear_button.visibility = View.VISIBLE
+            start_date_button.visibility = View.GONE
         }
-        start_date_button.setOnLongClickListener {
+        start_date_clear_button.setOnClickListener {
             startDate = null
-            true
+            start_date_date.text = ""
+            start_date_clear_button.visibility = View.GONE
+            start_date_button.visibility = View.VISIBLE
         }
+        end_date_clear_button.visibility = View.GONE
         end_date_button.setOnClickListener {
             if (endDate == null) endDate = Calendar.getInstance().time
             setDate(endDate!!, end_date_date)
+            end_date_clear_button.visibility = View.VISIBLE
+            end_date_button.visibility = View.GONE
         }
-        end_date_button.setOnLongClickListener {
+        end_date_clear_button.setOnClickListener {
             endDate = null
-            true
+            end_date_date.text = ""
+            end_date_clear_button.visibility = View.GONE
+            end_date_button.visibility = View.VISIBLE
         }
     }
 

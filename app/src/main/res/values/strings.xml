@@ -16,4 +16,5 @@
     <string name="end_date_text">When is the deadline? (Req. if Start Date chosen)</string>
     <string name="hint_date">Date</string>
     <string name="button_set_date">Set Date</string>
+    <string name="button_clear_date">Clear</string>
 </resources>
