@@ -126,8 +126,8 @@ class CreateEditItemActivity : AppCompatActivity() {
             end_date_clear_button.visibility = View.VISIBLE
             end_date_button.visibility = View.GONE
         }
-        importance_seekbar.progress = item!!.importance
-        effort_seekbar.progress = item!!.effort
+        importance_seekbar.progress = item!!.importance - 1
+        effort_seekbar.progress = item!!.effort - 1
 
         item_create_button.text = getString(R.string.create_save_button_save)
         item_delete_button.visibility = View.VISIBLE
