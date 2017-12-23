@@ -14,6 +14,7 @@ import com.aidandavisdev.aidandavis.prioritylist.Constants.Intents.PARAM_ITEM
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_create_edit_item.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -36,6 +37,8 @@ class CreateEditItemActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     private lateinit var uId: String
 
+    private val dateFormat = SimpleDateFormat("h:mm a | EEE, dd-MM-yyyy", Locale.getDefault())
+
     private var startDate: Date? = null
     private var endDate: Date? = null
 
@@ -52,35 +55,44 @@ class CreateEditItemActivity : AppCompatActivity() {
         item_create_button.setOnClickListener({ createOrEditItem() })
 
         // start and end date pickers
-        start_date_button.setOnClickListener { setDate(startDate, start_date_date, start_date_time) }
-        end_date_button.setOnClickListener { setDate(endDate, end_date_date, end_date_time) }
+        start_date_button.setOnClickListener {
+            if (startDate == null) startDate = Calendar.getInstance().time
+            setDate(startDate!!, start_date_date)
+        }
+        start_date_button.setOnLongClickListener {
+            startDate = null
+            true
+        }
+        end_date_button.setOnClickListener {
+            if (endDate == null) endDate = Calendar.getInstance().time
+            setDate(endDate!!, end_date_date)
+        }
+        end_date_button.setOnLongClickListener {
+            endDate = null
+            true
+        }
     }
 
-    private fun setDate(date: Date?, dateText: TextView, timeText: TextView) {
+    private fun setDate(date: Date, dateText: TextView) {
         val newDate = GregorianCalendar()
         val currentDate = GregorianCalendar()
-        if (date != null) {
-            currentDate.time = date
-        } else {
-            currentDate.time = Calendar.getInstance().time
-        }
+        currentDate.time = date
 
         DatePickerDialog(this,
                 DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                     newDate.set(Calendar.YEAR, year)
                     newDate.set(Calendar.MONTH, month)
                     newDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    dateText.text = "$dayOfMonth / $month / $year"
-
                     TimePickerDialog(this,
                             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
                                 newDate.set(Calendar.HOUR_OF_DAY, hourOfDay)
                                 newDate.set(Calendar.MINUTE, minute)
-                                timeText.text = "$hourOfDay:$minute"
+                                date.time = newDate.timeInMillis
+                                dateText.text = dateFormat.format(newDate.time)
                             },
                             currentDate.get(Calendar.HOUR_OF_DAY),
                             currentDate.get(Calendar.MINUTE),
-                            true)
+                            false)
                             .show()
                 },
                 currentDate.get(Calendar.YEAR),
@@ -93,6 +105,10 @@ class CreateEditItemActivity : AppCompatActivity() {
     private fun changeToEdit() {
         item_name.setText(item!!.name)
         item_description.setText(item!!.description)
+        startDate = item!!.startDate
+        if (startDate != null) start_date_date.text = dateFormat.format(startDate)
+        endDate = item!!.endDate
+        if (endDate != null) end_date_date.text = dateFormat.format(endDate)
         importance_seekbar.progress = item!!.importance
         effort_seekbar.progress = item!!.effort
 

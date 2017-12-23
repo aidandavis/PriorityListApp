@@ -10,8 +10,8 @@ import java.util.*
 class PrioritisedItem(val id: String,
                       var name: String,
                       var description: String,
-                      private var startDate: Date?,
-                      private var endDate: Date?,
+                      var startDate: Date?,
+                      var endDate: Date?,
                       var importance: Int,
                       var effort: Int,
                       var ticked: Boolean) : Serializable {
@@ -33,7 +33,8 @@ class PrioritisedItem(val id: String,
     private fun getUrgency(): Double {
         if (startDate == null || endDate == null) return 1.0
 
-        var urgency = ((startDate!!.time.toDouble())/(endDate!!.time.toDouble())) * 10.0
+        var urgency = ((Calendar.getInstance().timeInMillis - startDate!!.time) / (endDate!!.time - startDate!!.time)) * 10.0
+
         if (urgency < 1.0) urgency = 1.0
         return urgency
     }
