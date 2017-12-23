@@ -49,11 +49,6 @@ class CreateEditItemActivity : AppCompatActivity() {
         uId = FirebaseAuth.getInstance().currentUser?.uid!!
         item = intent.getSerializableExtra(PARAM_ITEM) as PrioritisedItem?
 
-        item_delete_button.visibility = View.GONE
-        edit_create_progress_bar.visibility = View.GONE
-        if (item != null) changeToEdit()
-        item_create_button.setOnClickListener({ createOrEditItem() })
-
         start_date_clear_button.visibility = View.GONE
         start_date_button.setOnClickListener {
             if (startDate == null) startDate = Calendar.getInstance().time
@@ -80,6 +75,11 @@ class CreateEditItemActivity : AppCompatActivity() {
             end_date_clear_button.visibility = View.GONE
             end_date_button.visibility = View.VISIBLE
         }
+
+        item_delete_button.visibility = View.GONE
+        edit_create_progress_bar.visibility = View.GONE
+        if (item != null) changeToEdit()
+        item_create_button.setOnClickListener({ createOrEditItem() })
     }
 
     private fun setDate(date: Date, dateText: TextView) {
@@ -115,9 +115,17 @@ class CreateEditItemActivity : AppCompatActivity() {
         item_name.setText(item!!.name)
         item_description.setText(item!!.description)
         startDate = item!!.startDate
-        if (startDate != null) start_date_date.text = dateFormat.format(startDate)
+        if (startDate != null) {
+            start_date_date.text = dateFormat.format(startDate)
+            start_date_clear_button.visibility = View.VISIBLE
+            start_date_button.visibility = View.GONE
+        }
         endDate = item!!.endDate
-        if (endDate != null) end_date_date.text = dateFormat.format(endDate)
+        if (endDate != null) {
+            end_date_date.text = dateFormat.format(endDate)
+            end_date_clear_button.visibility = View.VISIBLE
+            end_date_button.visibility = View.GONE
+        }
         importance_seekbar.progress = item!!.importance
         effort_seekbar.progress = item!!.effort
 
