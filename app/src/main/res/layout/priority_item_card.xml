@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp" >
+        android:padding="8dp" >
 
         <TextView
             android:id="@+id/item_name"
@@ -19,6 +19,8 @@
             android:layout_height="wrap_content"
             android:textSize="30sp"
             android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/ticked_checkbox"
+            android:layout_marginLeft="8dp"
             android:text="Name of item"/>
 
         <TextView
@@ -26,22 +28,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/item_name"
-            android:layout_marginLeft="4dp"
+            android:layout_toRightOf="@id/ticked_checkbox"
+            android:layout_marginLeft="10dp"
             android:text="The description of this item"/>
 
         <CheckBox
             android:id="@+id/ticked_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/item_description"/>
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:textSize="30sp"/>
         
         <TextView
             android:id="@+id/item_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/ticked_checkbox"
-            android:layout_alignBaseline="@id/ticked_checkbox"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
             android:text="score"/>
 
     </RelativeLayout>
