@@ -28,14 +28,15 @@ class MainActivity : AppCompatActivity() {
 
         mAuth = FirebaseAuth.getInstance()
 
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.app_bar_main)
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { CreateEditItemActivity.open(this, null) }
 
-        val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawer_layout.addDrawerListener(toggle)
-        toggle.syncState()
+//        uncomment after drawer back in
+//        val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+//        drawer_layout.addDrawerListener(toggle)
+//        toggle.syncState()
 
         main_list_view.setHasFixedSize(true)
         main_list_view.layoutManager = LinearLayoutManager(this)
@@ -57,13 +58,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
+    // uncomment once draw back
+//    override fun onBackPressed() {
+//        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+//            drawer_layout.closeDrawer(GravityCompat.START)
+//        } else {
+//            super.onBackPressed()
+//        }
+//    }
 
     override fun onResume() {
         super.onResume()
