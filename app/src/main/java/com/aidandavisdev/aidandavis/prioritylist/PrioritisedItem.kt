@@ -33,10 +33,16 @@ class PrioritisedItem(val id: String,
     private fun getUrgency(): Double {
         if (startDate == null || endDate == null) return 1.0
 
-        var urgency = ((Calendar.getInstance().timeInMillis - startDate!!.time) / (endDate!!.time - startDate!!.time)) * 10.0
+        val adjustedCurrentTime = Calendar.getInstance().timeInMillis - startDate!!.time
+        val adjustedEndTime = endDate!!.time - startDate!!.time
 
-        if (urgency < 1.0) urgency = 1.0
-        return urgency
+        return if (adjustedCurrentTime > adjustedEndTime) {
+            10.0
+        } else {
+            var urgency = (adjustedCurrentTime / adjustedEndTime) * 10.0
+            if (urgency < 1.0) urgency = 1.0
+            urgency
+        }
     }
 
     // returns the priority score of this object
