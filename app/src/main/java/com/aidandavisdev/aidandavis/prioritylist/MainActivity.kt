@@ -144,7 +144,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // uncheck all items first
         for (i in 0 until nav_view.menu.size()) {
             val menu = nav_view.menu.getItem(i)
-            if (menu.title == getString(R.string.list_submenu_title)) {
+            menu.isChecked = false
+            if (menu.hasSubMenu()) {
                 val subMenu = menu.subMenu
                 for (j in 0 until subMenu.size()) {
                     subMenu.getItem(j).isChecked = false

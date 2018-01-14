@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import android.widget.Toast
 import com.aidandavisdev.aidandavis.prioritylist.MainActivity.Companion.getItemsCollection
 import com.google.firebase.auth.FirebaseAuth
 
@@ -50,17 +51,18 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
         holder.itemView.setOnLongClickListener {
             if (!item.ticked) {
                 CreateEditItemActivity.open(context, itemList[position], list)
+            } else {
+                Toast.makeText(context, "Untick the item to edit or delete", Toast.LENGTH_SHORT).show()
             }
             true
         }
 
-        val uId = FirebaseAuth.getInstance().currentUser?.uid
-        if (uId != null) {
-            holder.tickedCheckbox.setOnClickListener {
-                getItemsCollection(uId)
-                        .document(item.id)
-                        .update("ticked", holder.tickedCheckbox.isChecked)
-            }
+        holder.tickedCheckbox.setOnClickListener {
+            getItemsCollection(FirebaseAuth.getInstance().currentUser!!.uid)
+                    .document(item.id)
+                    .update("ticked", holder.tickedCheckbox.isChecked)
+            itemList.remove(item)
+            notifyDataSetChanged()
         }
     }
 
