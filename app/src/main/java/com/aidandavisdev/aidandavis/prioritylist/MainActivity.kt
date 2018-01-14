@@ -8,7 +8,6 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import com.firebase.ui.auth.AuthUI
@@ -82,7 +81,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             lists.clear()
                             nav_view.menu.clear()
                             menuInflater.inflate(R.menu.main_drawer_menu, nav_view.menu)
-                            val listMenu = nav_view.menu.addSubMenu("Lists")
+                            val listMenu = nav_view.menu.addSubMenu(R.string.list_submenu_title)
                             for (listName in task.result["lists"] as ArrayList<String>) {
                                 lists.add(listName)
                                 listMenu.add(listName)
@@ -142,19 +141,33 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.add_list -> {
-                createAddListDialogue()
+        // uncheck all items first
+        for (i in 0 until nav_view.menu.size()) {
+            val menu = nav_view.menu.getItem(i)
+            if (menu.title == getString(R.string.list_submenu_title)) {
+                val subMenu = menu.subMenu
+                for (j in 0 until subMenu.size()) {
+                    subMenu.getItem(j).isChecked = false
+                }
             }
-            R.id.ticked_items -> {
+        }
+        when {
+            item.itemId == R.id.add_list -> createAddListDialogue()
+            item.itemId == R.id.ticked_items -> {
+                item.isChecked = true
                 showTickedItems()
             }
-            R.id.master_list -> {
+            item.itemId == R.id.master_list -> {
+                item.isChecked = true
                 listSelected = ""
                 updateItems()
             }
+            else -> {
+                item.isChecked = true
+                listSelected = item.title.toString()
+                updateItems()
+            }
         }
-
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }

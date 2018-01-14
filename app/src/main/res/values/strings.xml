@@ -18,4 +18,5 @@
     <string name="button_set_date">Set Date</string>
     <string name="button_clear_date">Clear</string>
     <string name="new_list_hint">Name of new list</string>
+    <string name="list_submenu_title">Lists</string>
 </resources>
