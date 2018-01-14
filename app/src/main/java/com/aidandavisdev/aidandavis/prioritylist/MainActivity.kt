@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import com.firebase.ui.auth.AuthUI
@@ -16,7 +17,6 @@ import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.dialog_new_list.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -79,13 +79,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         if (task.result.exists()) {
-                            val listMenu = nav_view.menu.addSubMenu("Lists")
                             lists.clear()
-                            listMenu.clear()
+                            nav_view.menu.clear()
+                            menuInflater.inflate(R.menu.main_drawer_menu, nav_view.menu)
+                            val listMenu = nav_view.menu.addSubMenu("Lists")
                             for (listName in task.result["lists"] as ArrayList<String>) {
                                 lists.add(listName)
                                 listMenu.add(listName)
                             }
+                            nav_view.invalidate()
+                        } else {
+                            val emptyList = HashMap<String, Any>()
+                            emptyList.put("lists", ArrayList<String>())
+                            getUserDoc(mAuth.currentUser!!.uid)
+                                    .set(emptyList)
+                            updateLists()
                         }
                     } else {
                         Log.w(TAG, "Error getting lists", task.exception)
@@ -152,23 +160,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun createAddListDialogue() {
-        val builder = AlertDialog.Builder(this)
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_new_list, null)
-        val newNameEditText = dialogView.findViewById<EditText>(R.id.new_list_text)
-        builder.setView(dialogView)
+        AlertDialog.Builder(this)
+                .setView(dialogView)
                 .setPositiveButton("Create", { _, _ ->
-                    val enteredName = newNameEditText.text.toString()
-                    if (enteredName !== "") {
+                    val enteredName = dialogView.findViewById<EditText>(R.id.new_list_text).text.toString()
+                    if (enteredName != "") {
                         lists.add(enteredName)
                         getUserDoc(mAuth.currentUser!!.uid)
                                 .update("lists", lists)
-                        updateLists()
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        updateLists()
+                                    } else {
+                                        Log.w(TAG, "Error adding list", task.exception)
+                                    }
+                                }
                     }
                 })
                 .setNegativeButton("Cancel", { dialog, _ ->
                     dialog.cancel()
                 })
-        builder.create().show()
+                .create().show()
     }
 
     override fun onBackPressed() {
