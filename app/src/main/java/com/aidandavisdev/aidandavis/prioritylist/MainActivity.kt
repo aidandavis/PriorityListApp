@@ -69,8 +69,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onResume() {
         super.onResume()
         if (mAuth.currentUser != null) {
-            updateItems()
             updateLists()
+            updateItems()
         }
     }
 
@@ -151,7 +151,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.delete_list -> {
                 if (listSelected == "") {
-                    Toast.makeText(this, "You can't delete the master list", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "You can't delete this list", Toast.LENGTH_SHORT).show()
                     return true
                 } else {
                     Toast.makeText(this, "Items not deleted, they will still show in master list", Toast.LENGTH_SHORT).show()
@@ -161,6 +161,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     updateLists()
+                                    listSelected = ""
+                                    updateItems()
                                 } else {
                                     Log.w(TAG, "Error adding list", task.exception)
                                 }
