@@ -10,7 +10,9 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import com.aidandavisdev.aidandavis.prioritylist.Constants.DateFormats.fullDate
 import com.aidandavisdev.aidandavis.prioritylist.Constants.Intents.PARAM_ITEM
+import com.aidandavisdev.aidandavis.prioritylist.MainActivity.Companion.getItemsCollection
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_create_edit_item.*
@@ -34,10 +36,7 @@ class CreateEditItemActivity : AppCompatActivity() {
     }
 
     private var item: PrioritisedItem? = null
-    private lateinit var db: FirebaseFirestore
     private lateinit var uId: String
-
-    private val dateFormat = SimpleDateFormat("h:mm a | EEE, dd-MM-yyyy", Locale.getDefault())
 
     private var startDate: Date? = null
     private var endDate: Date? = null
@@ -45,7 +44,6 @@ class CreateEditItemActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_edit_item)
-        db = FirebaseFirestore.getInstance()
         uId = FirebaseAuth.getInstance().currentUser?.uid!!
         item = intent.getSerializableExtra(PARAM_ITEM) as PrioritisedItem?
 
@@ -97,7 +95,7 @@ class CreateEditItemActivity : AppCompatActivity() {
                                 newDate.set(Calendar.HOUR_OF_DAY, hourOfDay)
                                 newDate.set(Calendar.MINUTE, minute)
                                 date.time = newDate.timeInMillis
-                                dateText.text = dateFormat.format(newDate.time)
+                                dateText.text = fullDate.format(newDate.time)
                             },
                             currentDate.get(Calendar.HOUR_OF_DAY),
                             currentDate.get(Calendar.MINUTE),
@@ -116,13 +114,13 @@ class CreateEditItemActivity : AppCompatActivity() {
         item_description.setText(item!!.description)
         startDate = item!!.startDate
         if (startDate != null) {
-            start_date_date.text = dateFormat.format(startDate)
+            start_date_date.text = fullDate.format(startDate)
             start_date_clear_button.visibility = View.VISIBLE
             start_date_button.visibility = View.GONE
         }
         endDate = item!!.endDate
         if (endDate != null) {
-            end_date_date.text = dateFormat.format(endDate)
+            end_date_date.text = fullDate.format(endDate)
             end_date_clear_button.visibility = View.VISIBLE
             end_date_button.visibility = View.GONE
         }
@@ -134,9 +132,7 @@ class CreateEditItemActivity : AppCompatActivity() {
         item_delete_button.setOnClickListener {
             edit_create_progress_bar.visibility = View.VISIBLE
             create_edit_item_button_bar.visibility = View.GONE
-            db.collection("users")
-                    .document(uId)
-                    .collection("list1")
+            getItemsCollection(uId)
                     .document(item!!.id)
                     .delete()
                     .addOnSuccessListener {
@@ -183,9 +179,7 @@ class CreateEditItemActivity : AppCompatActivity() {
         newDetails.put("effort", effort_seekbar.progress + 1)
 
         if (item == null) {
-            db.collection("users")
-                    .document(uId)
-                    .collection("list1")
+            getItemsCollection(uId)
                     .add(newDetails)
                     .addOnSuccessListener {
                         Log.d(TAG, "Item added with ID: ${it.id}")
@@ -198,9 +192,7 @@ class CreateEditItemActivity : AppCompatActivity() {
                         create_edit_item_button_bar.visibility = View.VISIBLE
                     }
         } else {
-            db.collection("users")
-                    .document(uId)
-                    .collection("list1")
+            getItemsCollection(uId)
                     .document(item!!.id)
                     .set(newDetails)
                     .addOnSuccessListener {

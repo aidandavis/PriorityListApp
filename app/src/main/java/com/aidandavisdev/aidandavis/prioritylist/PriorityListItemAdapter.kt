@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import com.aidandavisdev.aidandavis.prioritylist.MainActivity.Companion.getItemsCollection
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -52,10 +53,7 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
         val uId = FirebaseAuth.getInstance().currentUser?.uid
         if (uId != null) {
             holder.tickedCheckbox.setOnClickListener {
-                FirebaseFirestore.getInstance()
-                        .collection("users")
-                        .document(uId)
-                        .collection("list1")
+                getItemsCollection(uId)
                         .document(itemList[position].id)
                         .update("ticked", holder.tickedCheckbox.isChecked)
             }
