@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+        supportActionBar?.setTitle("Master List")
 
         main_list_view.setHasFixedSize(true)
         main_list_view.layoutManager = LinearLayoutManager(this)
@@ -163,6 +164,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                     updateLists()
                                     listSelected = ""
                                     updateItems()
+                                    supportActionBar?.setTitle("Master List")
                                 } else {
                                     Log.w(TAG, "Error adding list", task.exception)
                                 }
@@ -191,16 +193,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             item.itemId == R.id.ticked_items -> {
                 item.isChecked = true
                 showTickedItems()
+                supportActionBar?.setTitle("Ticked Items")
             }
             item.itemId == R.id.master_list -> {
                 item.isChecked = true
                 listSelected = ""
                 updateItems()
+                supportActionBar?.setTitle("Master List")
             }
             else -> {
                 item.isChecked = true
                 listSelected = item.title.toString()
                 updateItems()
+                supportActionBar?.setTitle(item.title)
             }
         }
         drawer_layout.closeDrawer(GravityCompat.START)
