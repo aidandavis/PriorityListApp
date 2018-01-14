@@ -8,9 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -34,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { CreateEditItemActivity.open(this, null) }
+        fab.setOnClickListener { CreateEditItemActivity.open(this, null, listSelected) }
 
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
@@ -63,30 +61,16 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         if (mAuth.currentUser != null) {
             val itemList = ArrayList<PrioritisedItem>()
-            if (listSelected != "") {
-                Companion.getItemsCollection(mAuth.currentUser!!.uid)
-                        .whereEqualTo("list", listSelected)
-                        .get()
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                task.result.mapTo(itemList) { mapToPrioritisedItem(it) }
-                                mPriorityListAdapter.updateList(itemList)
-                            } else {
-                                Log.w(TAG, "Error getting items", task.exception)
-                            }
+            getItemsInList(mAuth.currentUser!!.uid, listSelected)
+                    .get()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            task.result.mapTo(itemList) { mapToPrioritisedItem(it) }
+                            mPriorityListAdapter.updateList(itemList, listSelected)
+                        } else {
+                            Log.w(TAG, "Error getting items", task.exception)
                         }
-            } else {
-                Companion.getItemsCollection(mAuth.currentUser!!.uid)
-                        .get()
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                task.result.mapTo(itemList) { mapToPrioritisedItem(it) }
-                                mPriorityListAdapter.updateList(itemList)
-                            } else {
-                                Log.w(TAG, "Error getting items", task.exception)
-                            }
-                        }
-            }
+                    }
         }
     }
 
@@ -99,11 +83,7 @@ class MainActivity : AppCompatActivity() {
                 result["endDate"] as Date?,
                 (result["importance"] as Long).toInt(),
                 (result["effort"] as Long).toInt(),
-                if (result["ticked"] != null) {
-                    result["ticked"] as Boolean
-                } else {
-                    false
-                })
+                result["ticked"] as Boolean)
     }
 
     override fun onBackPressed() {
@@ -114,12 +94,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     companion object {
-        fun getItemsCollection(uid: String): CollectionReference {
+        fun getItemsCollection(uId: String): CollectionReference {
             return FirebaseFirestore.getInstance()
                     .collection("users")
-                    .document(uid)
+                    .document(uId)
                     .collection("items")
+        }
+
+        fun getItem(uId: String, itemId: String): DocumentReference {
+            return getItemsCollection(uId)
+                    .document(itemId)
+        }
+
+        // empty list means get all lists
+        fun getItemsInList(uId: String, list: String): Query {
+            return getItemsCollection(uId)
+                    .whereEqualTo("list", list)
+                    .whereEqualTo("ticked", false)
+        }
+
+        fun getTickedItems(uId: String): Query {
+            return getItemsCollection(uId)
+                    .whereEqualTo("ticked", true)
         }
     }
 }

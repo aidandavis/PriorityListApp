@@ -11,12 +11,12 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.aidandavisdev.aidandavis.prioritylist.Constants.DateFormats.fullDate
-import com.aidandavisdev.aidandavis.prioritylist.Constants.Intents.PARAM_ITEM
+import com.aidandavisdev.aidandavis.prioritylist.Constants.Intents.ITEM
+import com.aidandavisdev.aidandavis.prioritylist.Constants.Intents.LIST
+import com.aidandavisdev.aidandavis.prioritylist.MainActivity.Companion.getItem
 import com.aidandavisdev.aidandavis.prioritylist.MainActivity.Companion.getItemsCollection
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_create_edit_item.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -28,15 +28,17 @@ class CreateEditItemActivity : AppCompatActivity() {
     private val TAG = "CreateEditItemActivity"
 
     companion object {
-        fun open(context: Context, item: PrioritisedItem?) {
+        fun open(context: Context, item: PrioritisedItem?, list: String) {
             val openIntent = Intent(context, CreateEditItemActivity::class.java)
-            openIntent.putExtra(PARAM_ITEM, item)
+            openIntent.putExtra(ITEM, item)
+            openIntent.putExtra(LIST, list)
             context.startActivity(openIntent)
         }
     }
 
     private var item: PrioritisedItem? = null
     private lateinit var uId: String
+    private lateinit var list: String
 
     private var startDate: Date? = null
     private var endDate: Date? = null
@@ -45,7 +47,8 @@ class CreateEditItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_edit_item)
         uId = FirebaseAuth.getInstance().currentUser?.uid!!
-        item = intent.getSerializableExtra(PARAM_ITEM) as PrioritisedItem?
+        item = intent.getSerializableExtra(ITEM) as PrioritisedItem?
+        list = intent.getStringExtra(LIST)
 
         start_date_clear_button.visibility = View.GONE
         start_date_button.setOnClickListener {
@@ -132,8 +135,7 @@ class CreateEditItemActivity : AppCompatActivity() {
         item_delete_button.setOnClickListener {
             edit_create_progress_bar.visibility = View.VISIBLE
             create_edit_item_button_bar.visibility = View.GONE
-            getItemsCollection(uId)
-                    .document(item!!.id)
+            getItem(item!!.id, uId)
                     .delete()
                     .addOnSuccessListener {
                         Log.d(TAG, "Deleted item $item")
@@ -171,12 +173,14 @@ class CreateEditItemActivity : AppCompatActivity() {
         edit_create_progress_bar.visibility = View.VISIBLE
         create_edit_item_button_bar.visibility = View.GONE
         val newDetails = HashMap<String, Any?>()
+        newDetails.put("list", list)
         newDetails.put("name", item_name.text.toString())
         newDetails.put("description", item_description.text.toString())
         newDetails.put("startDate", startDate)
         newDetails.put("endDate", endDate)
         newDetails.put("importance", importance_seekbar.progress + 1)
         newDetails.put("effort", effort_seekbar.progress + 1)
+        newDetails.put("ticked", false)
 
         if (item == null) {
             getItemsCollection(uId)
@@ -192,8 +196,7 @@ class CreateEditItemActivity : AppCompatActivity() {
                         create_edit_item_button_bar.visibility = View.VISIBLE
                     }
         } else {
-            getItemsCollection(uId)
-                    .document(item!!.id)
+            getItem(item!!.id, uId)
                     .set(newDetails)
                     .addOnSuccessListener {
                         Log.d(TAG, "Updated item ${this.item}")
@@ -206,9 +209,5 @@ class CreateEditItemActivity : AppCompatActivity() {
                         create_edit_item_button_bar.visibility = View.VISIBLE
                     }
         }
-        Log.i(TAG, "Name ${item_name.text}")
-        Log.i(TAG, "Description ${item_description.text}")
-        Log.i(TAG, "Importance ${importance_seekbar.progress}")
-        Log.i(TAG, "Effort ${effort_seekbar.progress}")
     }
 }

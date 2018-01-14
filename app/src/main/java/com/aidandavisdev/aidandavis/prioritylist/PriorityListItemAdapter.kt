@@ -9,7 +9,6 @@ import android.widget.CheckBox
 import android.widget.TextView
 import com.aidandavisdev.aidandavis.prioritylist.MainActivity.Companion.getItemsCollection
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 /**
  * Created by Aidan Davis on 10/12/2017.
@@ -24,10 +23,12 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
         internal var tickedCheckbox: CheckBox = view.findViewById(R.id.ticked_checkbox)
     }
 
-    private var itemList: ArrayList<PrioritisedItem> = ArrayList()
+    private var itemList = ArrayList<PrioritisedItem>()
     private lateinit var context: Context
+    private lateinit var list: String
 
-    fun updateList(newList: List<PrioritisedItem>) {
+    fun updateList(newList: List<PrioritisedItem>, list: String) {
+        this.list = list
         itemList.clear()
         itemList.addAll(newList.sortedWith(compareBy(PrioritisedItem::getScore)).reversed()) // sort according to priority score
         notifyDataSetChanged()
@@ -40,13 +41,16 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.itemName.text = itemList[position].name
-        holder.itemDescription.text = itemList[position].description
-        holder.itemScore.text = "%.2f".format(itemList[position].getScore())
-        holder.tickedCheckbox.isChecked = itemList[position].ticked
+        val item = itemList[position]
+        holder.itemName.text = item.name
+        holder.itemDescription.text = item.description
+        holder.itemScore.text = "%.2f".format(item.getScore())
+        holder.tickedCheckbox.isChecked = item.ticked
 
         holder.itemView.setOnLongClickListener {
-            CreateEditItemActivity.open(context, itemList[position])
+            if (!item.ticked) {
+                CreateEditItemActivity.open(context, itemList[position], list)
+            }
             true
         }
 
@@ -54,7 +58,7 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
         if (uId != null) {
             holder.tickedCheckbox.setOnClickListener {
                 getItemsCollection(uId)
-                        .document(itemList[position].id)
+                        .document(item.id)
                         .update("ticked", holder.tickedCheckbox.isChecked)
             }
         }

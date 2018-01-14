@@ -10,7 +10,8 @@ import java.util.*
 class Constants {
 
     object Intents {
-        val PARAM_ITEM = "PARAM_ITEM"
+        val ITEM = "item"
+        val LIST = "list"
     }
 
     object DateFormats {
