@@ -8,8 +8,10 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -140,8 +142,38 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 result["ticked"] as Boolean)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.options_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.delete_list -> {
+                if (listSelected == "") {
+                    Toast.makeText(this, "You can't delete the master list", Toast.LENGTH_SHORT).show()
+                    return true
+                } else {
+                    Toast.makeText(this, "Items not deleted, they will still show in master list", Toast.LENGTH_SHORT).show()
+                    lists.remove(listSelected)
+                    getUserDoc(mAuth.currentUser!!.uid)
+                            .update("lists", lists)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    updateLists()
+                                } else {
+                                    Log.w(TAG, "Error adding list", task.exception)
+                                }
+                            }
+                    return true
+                }
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // uncheck all items first
+        // un-check all items first
         for (i in 0 until nav_view.menu.size()) {
             val menu = nav_view.menu.getItem(i)
             menu.isChecked = false
