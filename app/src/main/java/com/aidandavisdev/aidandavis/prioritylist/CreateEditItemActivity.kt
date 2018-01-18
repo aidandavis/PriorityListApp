@@ -135,7 +135,7 @@ class CreateEditItemActivity : AppCompatActivity() {
         item_delete_button.setOnClickListener {
             edit_create_progress_bar.visibility = View.VISIBLE
             create_edit_item_button_bar.visibility = View.GONE
-            getItem(item!!.id, uId)
+            getItem(uId, item!!.id)
                     .delete()
                     .addOnSuccessListener {
                         Log.d(TAG, "Deleted item $item")
@@ -173,14 +173,14 @@ class CreateEditItemActivity : AppCompatActivity() {
         edit_create_progress_bar.visibility = View.VISIBLE
         create_edit_item_button_bar.visibility = View.GONE
         val newDetails = HashMap<String, Any?>()
-        newDetails.put("list", list)
-        newDetails.put("name", item_name.text.toString())
-        newDetails.put("description", item_description.text.toString())
-        newDetails.put("startDate", startDate)
-        newDetails.put("endDate", endDate)
-        newDetails.put("importance", importance_seekbar.progress + 1)
-        newDetails.put("effort", effort_seekbar.progress + 1)
-        newDetails.put("ticked", false)
+        newDetails["list"] = list
+        newDetails["name"] = item_name.text.toString()
+        newDetails["description"] = item_description.text.toString()
+        newDetails["startDate"] = startDate
+        newDetails["endDate"] = endDate
+        newDetails["importance"] = importance_seekbar.progress + 1
+        newDetails["effort"] = effort_seekbar.progress + 1
+        newDetails["ticked"] = false
 
         if (item == null) {
             getItemsCollection(uId)
@@ -196,7 +196,7 @@ class CreateEditItemActivity : AppCompatActivity() {
                         create_edit_item_button_bar.visibility = View.VISIBLE
                     }
         } else {
-            getItem(item!!.id, uId)
+            getItem(uId, item!!.id)
                     .set(newDetails)
                     .addOnSuccessListener {
                         Log.d(TAG, "Updated item ${this.item}")

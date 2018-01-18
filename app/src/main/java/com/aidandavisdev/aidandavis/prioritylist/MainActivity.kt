@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-        supportActionBar?.setTitle("Master List")
+        supportActionBar?.title = "Master List"
 
         main_list_view.setHasFixedSize(true)
         main_list_view.layoutManager = LinearLayoutManager(this)
