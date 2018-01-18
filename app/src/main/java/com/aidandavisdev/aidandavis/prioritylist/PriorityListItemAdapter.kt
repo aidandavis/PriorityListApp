@@ -20,7 +20,8 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         internal var itemName: TextView = view.findViewById(R.id.item_name)
         internal var itemDescription: TextView = view.findViewById(R.id.item_description)
-        internal var itemScore: TextView = view.findViewById(R.id.item_score)
+        internal var itemList: TextView = view.findViewById(R.id.item_list_name)
+        internal var itemDueDate: TextView = view.findViewById(R.id.item_due_date)
         internal var tickedCheckbox: CheckBox = view.findViewById(R.id.ticked_checkbox)
     }
 
@@ -45,7 +46,8 @@ class PriorityListItemAdapter : RecyclerView.Adapter<PriorityListItemAdapter.Vie
         val item = itemList[position]
         holder.itemName.text = item.name
         holder.itemDescription.text = item.description
-        holder.itemScore.text = "%.2f".format(item.getScore())
+        holder.itemList.text = item.list
+        holder.itemDueDate.text = if (item.endDate != null) Constants.DateFormats.fullDate.format(item.endDate) else ""
         holder.tickedCheckbox.isChecked = item.ticked
 
         holder.itemView.setOnLongClickListener {

@@ -50,6 +50,12 @@ class CreateEditItemActivity : AppCompatActivity() {
         item = intent.getSerializableExtra(ITEM) as PrioritisedItem?
         list = intent.getStringExtra(LIST)
 
+        if (item == null) {
+            supportActionBar?.title = "Create New Item"
+        } else {
+            supportActionBar?.title = "Edit Item"
+        }
+
         start_date_clear_button.visibility = View.GONE
         start_date_button.setOnClickListener {
             if (startDate == null) startDate = Calendar.getInstance().time

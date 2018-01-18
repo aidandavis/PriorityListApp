@@ -14,7 +14,8 @@ class PrioritisedItem(val id: String,
                       var endDate: Date?,
                       var importance: Int,
                       var effort: Int,
-                      var ticked: Boolean) : Serializable {
+                      var ticked: Boolean,
+                      val list: String): Serializable {
 
     init {
         // check that effort and importance are within expected range

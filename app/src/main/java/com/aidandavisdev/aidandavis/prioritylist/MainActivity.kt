@@ -140,7 +140,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 result["endDate"] as Date?,
                 (result["importance"] as Long).toInt(),
                 (result["effort"] as Long).toInt(),
-                result["ticked"] as Boolean)
+                result["ticked"] as Boolean,
+                result["list"] as String)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
